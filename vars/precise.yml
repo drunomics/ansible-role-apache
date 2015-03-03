@@ -1,0 +1,4 @@
+# Various vars.
+
+apache_site_file_suffix: ''
+apache_site_package_default: 000-default

@@ -1,0 +1,24 @@
+---
+##
+# Apache
+#
+- name: "Add settings per ubuntu release"
+  include_vars: "{{ ansible_distribution_release }}.yml"
+  tags:
+   - apache
+
+- name: Install packages.
+  apt: pkg="{{ item }}" state=latest
+  with_items:
+   - apache2
+   # For htpasswd ansible module
+   - python-passlib
+
+- name: Disable the default site
+  command: >
+    a2dissite {{ apache_site_package_default }} removes=/etc/apache2/sites-enabled/{{ apache_site_package_default }}{{ apache_site_file_suffix }}
+  notify: restart apache
+
+- name: Enable rewrite module
+  command: a2enmod rewrite creates=/etc/apache2/mods-enabled/rewrite.load
+  notify: restart apache
