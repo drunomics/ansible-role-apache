@@ -1,0 +1,20 @@
+# Task include for configuring a single site.
+# Needs the "site" and "site_name" variables set.
+---
+- name: "Configure site {{ site_name }}"
+  template:
+    src: "vhost.conf.j2"
+    dest: "{{ apache_conf_path }}/sites-available/{{ site_name }}{{ apache_site_file_suffix }}"
+  notify: restart apache
+
+- name: "Enable site {{ site_name }}"
+  command: >
+    a2ensite {{ site_name }} creates={{ apache_conf_path }}/sites-enabled/{{ site_name }}{{ apache_site_file_suffix }}
+  when: site.enabled|bool
+  notify: restart apache
+
+- name: "Disable site {{ site_name }}"
+  command: >
+    a2dissite {{ site_name }} removes={{ apache_conf_path }}/sites-enabled/{{ site_name }}{{ apache_site_file_suffix }}
+  when: not site.enabled|bool
+  notify: restart apache

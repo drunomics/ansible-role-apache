@@ -1,0 +1,31 @@
+<VirtualHost {{ site.listen_ip }}:{{ apache_listen_port }}>
+{% include 'vhost-body.j2' %}
+
+{% if not ( site.ssl_enabled and site.ssl_forced ) %}
+{% include 'vhost-directory.j2' %}
+{% else %}
+  Redirect permanent / https://{{ site.server_name }}/
+{% endif %}
+
+</VirtualHost>
+
+{% if site.ssl_enabled %}
+<VirtualHost {{ site.listen_ip }}:{{ apache_listen_port_ssl }}>
+{% include 'vhost-body.j2' %}
+{% include 'vhost-directory.j2' %}
+
+  SSLEngine on
+  SSLCipherSuite {{ apache_ssl_cipher_suite }}
+  SSLProtocol {{ apache_ssl_protocol }}
+  SSLHonorCipherOrder On
+{% if apache_vhosts_version == "2.4" %}
+  SSLCompression off
+{% endif %}
+  SSLCertificateFile    "{{ site.certificate_file }}"
+  SSLCertificateKeyFile "{{ site.certificate_key_file }}"
+  {% if site.certificate_chain_file is defined %}
+  SSLCertificateChainFile "{{ site.certificate_chain_file }}"
+  {% endif %}
+
+</VirtualHost>
+{% endif %}

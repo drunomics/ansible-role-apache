@@ -26,3 +26,26 @@
 - name: Configure apache listen port
   lineinfile: dest=/etc/apache2/ports.conf regexp="^Listen " line="Listen {{ apache_listen_port }}"
   notify: restart apache
+
+- name: Create htpasswd directory
+  file: path={{ apache_conf_path }}/htpasswd/ state=directory
+
+- name: Creating htpasswd entries
+  copy:
+    content: |
+      {% for line in item.value %}
+      {{ line }}
+      {% endfor %}
+    dest: "{{ apache_conf_path }}/htpasswd/{{ item.key }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  with_dict: "{{ apache_htpasswd_files }}"
+  notify: restart apache
+
+- name: "Configure sites"
+  include: configure_site.yml
+  vars:
+    site_name: "{{ item.key }}"
+    site: "{{ apache_site_defaults|combine(item.value) }}"
+  with_dict: "{{ apache_sites }}"

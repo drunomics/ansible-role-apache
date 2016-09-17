@@ -1,3 +1,47 @@
 ---
-
+apache_listen_ip: "*"
 apache_listen_port: 80
+apache_listen_port_ssl: 443
+
+apache_ssl_protocol: "All -SSLv2 -SSLv3"
+apache_ssl_cipher_suite: "AES256+EECDH:AES256+EDH"
+
+# Default Password = user
+apache_htpasswd_files:
+  default:
+   - "user:$apr1$v9CvCAag$Ow.1dk44cqh5cd87FYE6M1"
+  adminer:
+   - "adminer:$apr1$fOAE1KZ5$q.V9IEWQ8hbndyNhvL92q0"
+
+apache_site_defaults:
+  # The filename (without the directory path) of the htpasswd file.
+  # To disable password protection just set it empty.
+  # Set to 'default' to enable default password protection.
+  htpasswd_file:
+  server_admin: webmaster@example.com
+  server_alias:
+  ssl_enabled: false
+  extra_config: ''
+  enabled: true
+  listen_ip: '*'
+
+apache_sites:
+  default:
+    document_root: /srv/default/web
+    server_name: example.com
+  site_name:
+    document_root: /srv/default/web2
+    server_name: example2.com
+    enabled: false
+  ssl_example:
+    document_root: /srv/default/web
+    server_name: example.com
+    ssl_enabled: true
+    ssl_forced: false
+    certificate_file: "/home/vagrant/example.crt"
+    certificate_key_file: "/home/vagrant/example.key"
+    certificate_chain_file: "/path/to/certificate_chain.crt"
+    enabled: false
+
+apache_sites_absent:
+  - old_site_name_to_delete

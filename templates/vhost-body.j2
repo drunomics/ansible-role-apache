@@ -1,0 +1,9 @@
+  ServerName {{ site.server_name }}
+  ServerAdmin {{ site.server_admin }}
+{% if site.server_alias %}
+  ServerAlias {{ site.server_alias }}
+{% endif %}
+  DocumentRoot {{ site.document_root }}
+{% if site.extra_config %}
+  {{ site.extra_config|indent(2) }}
+{% endif %}
