@@ -1,6 +1,7 @@
   <Directory {{ site.document_root }}>
     Options {{ site.options }}
     AllowOverride {{ site.allow_override }}
+    DirectoryIndex {{ site.directory_index }}
     Satisfy any
 
 {% if site.htpasswd_file %}

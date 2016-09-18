@@ -28,6 +28,7 @@ apache_site_defaults:
     - "127.0.0.1"
   # Some more defaults which are less likely to be changed.
   allow_override: "All"
+  directory_index: index.php index.html index.htm
   options: "Indexes FollowSymLinks MultiViews"
 
 apache_sites:
