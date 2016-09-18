@@ -1,0 +1,40 @@
+# The playbook requires a running container, see run-container.yml.
+---
+- hosts: all:&{{ limit_groups | default('container') }}
+  become: true
+  vars:
+    apache_sites:
+      default:
+        document_root: /srv/default/web
+        server_name: example.com
+        htpasswd_file: default
+        htpasswd_bypass_from: []
+    apache_htpasswd_files:
+      default:
+       # user / user
+       - "user:$apr1$v9CvCAag$Ow.1dk44cqh5cd87FYE6M1"
+       # test / test
+       - "test:$apr1$q0.ijhqg$sAcXT5LOL7ZRudxz7qq/f1"
+
+  roles:
+    - self
+
+  post_tasks:
+    - include: prepare-test-assertions.yml
+
+    - name: Test access is unauthorized
+      shell:
+        curl -s -o /dev/null -w "%{http_code}" http://{{ ansible_default_ipv4.address }}/
+      register: result
+      failed_when: result.stdout != "401"
+      tags: assert
+
+    - name: Test authorized webserver output with configured credentials
+      shell:
+        curl -u {{ item }} http://{{ ansible_default_ipv4.address }}/
+      with_items:
+       - test:test
+       - user:user
+      register: result
+      failed_when: result.stdout != "Example."
+      tags: assert

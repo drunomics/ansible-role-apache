@@ -1,0 +1,12 @@
+# Task include for configuring a single site.
+# Needs the "site_name" variables set.
+---
+- name: "Disable site {{ site_name }}"
+  command: >
+    a2dissite {{ site_name }} removes={{ apache_conf_path }}/sites-enabled/{{ site_name }}{{ apache_site_file_suffix }}
+  notify: restart apache
+
+- name: "Remove site {{ site_name }}"
+  file:
+    path: "{{ apache_conf_path }}/sites-available/{{ site_name }}{{ apache_site_file_suffix }}"
+    state: absent

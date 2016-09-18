@@ -1,0 +1,22 @@
+# The playbook requires a running container, see run-container.yml.
+---
+- hosts: all:&{{ limit_groups | default('container') }}
+  become: true
+  vars:
+    apache_sites:
+      default:
+        document_root: /srv/default/web
+        server_name: example.com
+
+  roles:
+    - self
+
+  post_tasks:
+    - include: prepare-test-assertions.yml
+
+    - name: Test webserver output
+      shell:
+        curl http://{{ ansible_default_ipv4.address }}/
+      register: result
+      failed_when: result.stdout != "Example."
+      tags: assert

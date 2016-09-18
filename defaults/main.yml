@@ -3,27 +3,32 @@ apache_listen_ip: "*"
 apache_listen_port: 80
 apache_listen_port_ssl: 443
 
+# See https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+apache_ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:!aNULL:!MD5:!DSS"
 apache_ssl_protocol: "All -SSLv2 -SSLv3"
-apache_ssl_cipher_suite: "AES256+EECDH:AES256+EDH"
 
 # Default Password = user
 apache_htpasswd_files:
   default:
    - "user:$apr1$v9CvCAag$Ow.1dk44cqh5cd87FYE6M1"
-  adminer:
-   - "adminer:$apr1$fOAE1KZ5$q.V9IEWQ8hbndyNhvL92q0"
 
 apache_site_defaults:
+  enabled: true
+  extra_config: ''
+  listen_ip: '*'
+  server_admin: webmaster@example.com
+  server_alias:
+  ssl_enabled: false
   # The filename (without the directory path) of the htpasswd file.
   # To disable password protection just set it empty.
   # Set to 'default' to enable default password protection.
   htpasswd_file:
-  server_admin: webmaster@example.com
-  server_alias:
-  ssl_enabled: false
-  extra_config: ''
-  enabled: true
-  listen_ip: '*'
+  # Allow directives to bypass password protection, e.g. IP address or domain.
+  htpasswd_bypass_from:
+    - "127.0.0.1"
+  # Some more defaults which are less likely to be changed.
+  allow_override: "All"
+  options: "Indexes FollowSymLinks MultiViews"
 
 apache_sites:
   default:
@@ -44,4 +49,4 @@ apache_sites:
     enabled: false
 
 apache_sites_absent:
-  - old_site_name_to_delete
+  - "{{ apache_site_package_default }}"

@@ -1,5 +1,19 @@
   <Directory {{ site.document_root }}>
-    Options Indexes FollowSymLinks MultiViews
-    AllowOverride All
+    Options {{ site.options }}
+    AllowOverride {{ site.allow_override }}
     Satisfy any
+
+{% if site.htpasswd_file %}
+    AuthType Basic
+    AuthName "Restricted access"
+    AuthUserFile /etc/apache2/htpasswd/{{ site.htpasswd_file }}
+    require valid-user
+
+    Order deny,allow
+    Deny from all
+    # Allow password-less access from some IP addresses.
+  {% for item in site.htpasswd_bypass_from %}
+    Allow from {{ item }}
+  {% endfor %}
+{% endif %}
   </Directory>

@@ -1,2 +1,15 @@
 ---
 dependencies: []
+
+galaxy_info:
+  author: Wolfgang Ziegler
+  description: Ansible role for configuring Apache vhosts.
+  company: drunomics GmbH
+  min_ansible_version: 2.0
+
+  platforms:
+  - name: Ubuntu
+    versions:
+      - precise
+      - trusty
+      - xenial

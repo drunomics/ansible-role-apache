@@ -6,6 +6,7 @@ services:
   - docker
 env:
   - playbook: test-no-ssl.yml
+  - playbook: test-protection.yml
 
 before_install:
   # Install Ansible.

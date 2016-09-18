@@ -8,16 +8,11 @@
    - apache
 
 - name: Install packages.
-  apt: pkg="{{ item }}" state=present update_cache=yes cache_valid_time=86400
+  apt: pkg="{{ item }}" state=present
   with_items:
    - apache2
    # For htpasswd ansible module
    - python-passlib
-
-- name: Disable the default site
-  command: >
-    a2dissite {{ apache_site_package_default }} removes=/etc/apache2/sites-enabled/{{ apache_site_package_default }}{{ apache_site_file_suffix }}
-  notify: restart apache
 
 - name: Enable rewrite module
   command: a2enmod rewrite creates=/etc/apache2/mods-enabled/rewrite.load
@@ -49,3 +44,9 @@
     site_name: "{{ item.key }}"
     site: "{{ apache_site_defaults|combine(item.value) }}"
   with_dict: "{{ apache_sites }}"
+
+- name: "Remove old sites"
+  include: remove_site.yml
+  vars:
+    site_name: "{{ item }}"
+  with_items: "{{ apache_sites_absent }}"

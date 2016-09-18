@@ -1,0 +1,20 @@
+# Include for for tasks containing test assertions.
+---
+- name: Install test prerequesites
+  apt: name=curl state=present
+  tags: assert
+
+- name: Assert that a webserver is installed and listening
+  shell: >
+    netstat -tunlp | grep ":{{ apache_listen_port }} "
+  tags: assert
+
+- name: Ensure default docroot is created
+  file: path=/srv/default/web state=directory
+  tags: assert
+
+- name: Add HTML file
+  copy:
+    content: "Example."
+    dest: /srv/default/web/index.html
+  tags: assert
