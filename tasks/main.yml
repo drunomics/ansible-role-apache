@@ -14,9 +14,15 @@
    # For htpasswd ansible module
    - python-passlib
 
-- name: Enable rewrite module
-  command: a2enmod rewrite creates=/etc/apache2/mods-enabled/rewrite.load
+- name: Enable modules
+  command: a2enmod {{ item }} creates=/etc/apache2/mods-enabled/{{ item }}.load
   notify: restart apache
+  with_items: "{{ apache_modules_enable }}"
+
+- name: Disable modules
+  command: a2dismod {{ item }} removes=/etc/apache2/mods-enabled/{{ item }}.load
+  notify: restart apache
+  with_items: "{{ apache_modules_disable }}"
 
 - name: Configure apache listen port
   lineinfile: dest=/etc/apache2/ports.conf regexp="^Listen " line="Listen {{ apache_listen_port }}"
