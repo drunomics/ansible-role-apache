@@ -36,7 +36,7 @@ apache_site_defaults:
   options: "Indexes FollowSymLinks MultiViews"
 
 apache_sites:
-  default:
+  00-default:
     document_root: /srv/default/web
     server_name: example.com
   site_name:
